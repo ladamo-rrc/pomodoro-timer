@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <link rel="stylesheet" href="style.css">
+
+    <title>Tomato Time</title>
+
+  </head>
+  <body>
+    <div class="pomodoro">
+      <h1>Pomo time!</h1>
+      <h3 class="pomodoro__mode">Work</h3>
+      <div class="pomodoro__time">25:00</div>
+      <div class="pomodoro__controls">
+        <button id="startButton">start</button>
+        <button id="resetButton">reset</button>
+        <button id="pauseButton">pause</button>
+      </div>
+    </div>
+    <script src = "renderer.js"></script>
+  </body>
+</html>

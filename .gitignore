@@ -1,0 +1,26 @@
+# Node.js dependencies
+node_modules/
+
+# Build and dist folders
+dist/
+build/
+
+# Log files
+*.log
+
+# OS and IDE files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# npm debug files
+npm-debug.log*
+
+# Electron packaging
+*.dmg
+*.app
+*.exe
+
+# Environment files
+.env
