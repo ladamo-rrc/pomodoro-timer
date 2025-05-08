@@ -45,11 +45,8 @@ function startTimer() {
 
             alarmSound.play();
             let nextLabel = currentMode === "work" ? "work" : "break";
-            setTimeout(() => {
-                alert(`Time for ${nextLabel}! Click OK to begin.`);
-                startTimer();
-            }, 100);
-        }
+            showCustomAlert(`Time for a ${nextLabel}! Click OK to begin.`, startTimer);
+            }
     }, 1000);
 }
 
@@ -145,3 +142,22 @@ saveButton.addEventListener('click', () => {
 
     sliderContainer.style.display = 'none';
 });
+
+// CUSTOM ALERT BOX //
+
+function showCustomAlert(message, callback) {
+    const alertBox = document.getElementById('custom-alert');
+    const alertMessage = document.getElementById('alert-message');
+    const okButton = document.getElementById('alert-ok');
+
+    alertMessage.textContent = message;
+    alertBox.classList.remove('hidden');
+
+    function closeAlert() {
+        alertBox.classList.add('hidden');
+        okButton.removeEventListener('click', closeAlert);
+        callback(); // starts the next timer phase 
+    }
+
+    okButton.addEventListener('click', closeAlert);
+}

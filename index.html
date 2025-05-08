@@ -30,13 +30,24 @@
         <input type="range" id="work-slider" min="1" max="60" value="25">
 
         <label for="break-slider">Break Minutes: <span id="break-value">5</span></label>
-        <input type="range" id="break-slider" min="1" max="30" value="5">
+        <input type="range" id="break-slider" min="0.5" max="30" value="5">
 
         <button id="save-settings">OK</button>
         
       </div>
 
       </div>
+
+      <!-- ALERT BOX -->
+
+      <div id="custom-alert" class="pixel-alert hidden">
+        <img src="assets/ui/break-time-alert.png" alt="Alert Box" id="alert-bg" draggable="false">
+        <div class="alert-text">
+          <p id="alert-message">Time for a break!</p>
+          <button id="alert-ok">OK</button>
+        </div>
+      </div>
+      
     </div>
     <script src = "renderer.js"></script>
   </body>
