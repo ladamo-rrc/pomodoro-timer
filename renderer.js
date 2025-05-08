@@ -43,7 +43,12 @@ function startTimer() {
                 timeLeft = workDuration;
             }
 
-            startTimer();
+            alarmSound.play();
+            let nextLabel = currentMode === "work" ? "work" : "break";
+            setTimeout(() => {
+                alert(`Time for ${nextLabel}! Click OK to begin.`);
+                startTimer();
+            }, 100);
         }
     }, 1000);
 }
@@ -99,12 +104,44 @@ function switchTimer() {
 
   /*** SLIDERS ***/
 
+let workMinutes = 25;
+let breakMinutes = 5;
+
+const toggleButton = document.getElementById('toggle-settings');
+const sliderContainer = document.getElementById('slider-container');
 const workSlider = document.getElementById('work-slider');
 const breakSlider = document.getElementById('break-slider');
-const workValue = document.getElementById('work-Value');
+const workValue = document.getElementById('work-value');
 const breakValue = document.getElementById('break-value');
 const saveButton = document.getElementById('save-settings');
+const timerDisplay = document.querySelector('.pomodoro__time');
 
 workSlider.addEventListener('input', () =>{
     workValue.textContent = workSlider.value;
+});
+
+breakSlider.addEventListener('input', ()=> {
+    breakValue.textContent = breakSlider.value;
 })
+
+toggleButton.addEventListener('click', () => {
+    const isHidden = sliderContainer.style.display === 'none';
+    sliderContainer.style.display = isHidden ? 'block' : 'none';
+});
+
+saveButton.addEventListener('click', () => {
+    const newWorkMinutes = parseInt(workSlider.value, 10);
+    const newBreakMinutes = parseInt(breakSlider.value, 10);
+
+    workDuration = newWorkMinutes * 60;
+    shortBreak = newBreakMinutes * 60;
+
+    if (!timerRunning) {
+        timeLeft = currentMode === "work" ? workDuration
+            : currentMode === "shortBreak" ? shortBreak
+            : longBreak;
+        displayTimeLeft(timeLeft);
+    }
+
+    sliderContainer.style.display = 'none';
+});
