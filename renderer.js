@@ -10,6 +10,9 @@ let completedSessions = 0;
 let timerRunning = false;
 let intervalId = null;
 
+/*** TIMER ***/
+
+// Timer function // 
 function startTimer() {
     if (timerRunning) {
         return;
@@ -45,6 +48,7 @@ function startTimer() {
     }, 1000);
 }
 
+// pause function // 
 function pauseTimer(){
     if (timerRunning) {
         clearInterval(intervalId);
@@ -52,6 +56,7 @@ function pauseTimer(){
     }
 }
 
+// Reset // 
 function resetTimer() {
     clearInterval(intervalId);
     timerRunning = false;
@@ -63,6 +68,7 @@ function resetTimer() {
     document.title = "Pomodoro timer";
 }
 
+// Display time left // 
 function displayTimeLeft(seconds) {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
@@ -74,3 +80,31 @@ function displayTimeLeft(seconds) {
 document.getElementById("startButton").addEventListener("click", startTimer);
 document.getElementById("pauseButton").addEventListener("click", pauseTimer);
 document.getElementById("resetButton").addEventListener("click", resetTimer);
+
+/*** ALARM SOUND ***/
+
+const alarmSound = new Audio('assets/tones/marimba-alert.mp3');
+
+function switchTimer() {
+    alarmSound.play(); 
+    if (isWorking) {
+      currentTime = breakTime;
+      isWorking = false;
+    } else {
+      currentTime = workTime;
+      isWorking = true;
+    }
+    updateDisplay();
+  }
+
+  /*** SLIDERS ***/
+
+const workSlider = document.getElementById('work-slider');
+const breakSlider = document.getElementById('break-slider');
+const workValue = document.getElementById('work-Value');
+const breakValue = document.getElementById('break-value');
+const saveButton = document.getElementById('save-settings');
+
+workSlider.addEventListener('input', () =>{
+    workValue.textContent = workSlider.value;
+})

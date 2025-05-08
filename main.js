@@ -1,5 +1,7 @@
 // main.js
 
+// code used from https://www.electronjs.org/docs/latest/tutorial/tutorial-first-app
+
 // Modules to control application life and create native browser window
 const { app, BrowserWindow } = require('electron')
 const path = require('node:path')
@@ -7,8 +9,8 @@ const path = require('node:path')
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 640,
+    height: 360,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js') // change this for react later 
     }
