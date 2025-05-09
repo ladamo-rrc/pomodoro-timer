@@ -131,12 +131,24 @@ toggleButton.addEventListener('click', () => {
     sliderContainer.style.display = isHidden ? 'block' : 'none';
 });
 
+// ok button for sliders // 
+
 saveButton.addEventListener('click', () => {
     const newWorkMinutes = parseInt(workSlider.value, 10);
     const newBreakMinutes = parseInt(breakSlider.value, 10);
 
     workDuration = newWorkMinutes * 60;
     shortBreak = newBreakMinutes * 60;
+
+    pauseTimer();
+
+    if (currentMode === "work") {
+        timeLeft = workDuration;
+    } else {
+        timeLeft = shortBreak;
+    }
+
+    displayTimeLeft(timeLeft);
 
     sliderContainer.style.display = 'none'; 
 });

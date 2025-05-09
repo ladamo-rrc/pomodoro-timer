@@ -24,3 +24,5 @@
     - one focus task at bottom of screen
 
 - add custom messages based on how many cycles the user has completed.
+
+- add functionality for individuals to change the amount of cycles they wish to do 
