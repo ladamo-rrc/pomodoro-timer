@@ -42,12 +42,17 @@ function startTimer() {
                 currentMode = "work";
                 timeLeft = workDuration;
             }
+            
+            updateModeLabel();
 
             alarmSound.play();
-            let nextLabel = currentMode === "work" ? "work" : "break";
-            showCustomAlert(`Time for a ${nextLabel}! Click OK to begin.`, startTimer);
+            if(currentMode === "work"){
+                showCustomAlert("Time to focus! Click ok to start working.", startTimer);
+            } else {
+                showCustomAlert("Time for a break! Click ok to start!", startTimer);
             }
-    }, 1000);
+            }
+    }, 50); // interval in milliseconds, change for testing 
 }
 
 // pause function // 
@@ -99,7 +104,7 @@ function switchTimer() {
     updateDisplay();
   }
 
-  /*** SLIDERS ***/
+/*** SLIDERS ***/
 
 let workMinutes = 25;
 let breakMinutes = 5;
@@ -133,14 +138,7 @@ saveButton.addEventListener('click', () => {
     workDuration = newWorkMinutes * 60;
     shortBreak = newBreakMinutes * 60;
 
-    if (!timerRunning) {
-        timeLeft = currentMode === "work" ? workDuration
-            : currentMode === "shortBreak" ? shortBreak
-            : longBreak;
-        displayTimeLeft(timeLeft);
-    }
-
-    sliderContainer.style.display = 'none';
+    sliderContainer.style.display = 'none'; 
 });
 
 // CUSTOM ALERT BOX //
@@ -161,3 +159,7 @@ function showCustomAlert(message, callback) {
 
     okButton.addEventListener('click', closeAlert);
 }
+
+function updateModeLabel() {
+    const modeLabel = document.querySelector(".pomodoro__mode");
+    modeLabel.textContent = currentMode === "work" ? "Work" : "Break";}
