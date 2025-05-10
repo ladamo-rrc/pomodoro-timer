@@ -81,7 +81,37 @@
   }
 
   #slider-container {
-    display: none;
+    display: none;  
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    width: 250px;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.8);  
+    border-radius: 10px;  
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);  
+    margin: 0 auto; 
+    position: absolute;
+    top: 50%;  
+    left: 50%;
+    transform: translate(-50%, -50%);  
+  }
+
+  label {
+      display: block;
+      text-align: center;
+      margin-bottom: 5px;
+      color: #fdcbb0
+  }
+
+  input[type="range"] {
+      width: 100%;
+      margin-bottom: 10px;
+  }
+
+  button {
+      margin-top: 10px;
   }
 
   #toggle-settings {
@@ -103,50 +133,63 @@
 
   /* Custom alert styling */
 
-  .pixel-alert {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 400px; 
-    height: 200px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+ @keyframes pulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
   }
-  
-  .pixel-alert img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;   
-    height: 100%;
-    object-fit: fill; 
-    image-rendering: pixelated;
+  50% {
+    transform: translate(-50%, -50%) scale(1.05);
   }
-  
-  .pixel-alert.hidden {
-    display: none;
-  }
-  
-  .alert-text {
-    position: absolute;
-    z-index: 1;
-    text-align: center;
-    color: white;
-    font-family: 'yoster', monospace; 
-    padding: 1rem;
-  }
-  
-  #alert-message {
-    font-size: 16px;
-    margin-bottom: 12px;
-  }
-  
-  #alert-ok {
-    font-size: 14px;
-    padding: 4px 8px;
-  }
+}
 
+.pixel-alert {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px; 
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.pixel-alert:not(.hidden) {
+  animation: pulse 2s infinite ease-in-out;
+}
+
+.pixel-alert img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;   
+  height: 100%;
+  object-fit: fill; 
+  image-rendering: pixelated;
+}
+
+.pixel-alert.hidden {
+  display: none;
+}
+
+.alert-text {
+  position: absolute;
+  z-index: 1;
+  text-align: center;
+  color: white;
+  font-family: 'yoster', monospace; 
+  padding: 1rem;
+}
+
+#alert-message {
+  font-size: 16px;
+  margin-bottom: 12px;
+}
+
+#alert-ok {
+  font-size: 14px;
+  padding: 4px 8px;
+}
  

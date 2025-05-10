@@ -134,6 +134,9 @@ toggleButton.addEventListener('click', () => {
 // ok button for sliders // 
 
 saveButton.addEventListener('click', () => {
+    if (!confirm("Changing the timer settings will reset the timer. Are you sure you want to continue?")) 
+        return;
+
     const newWorkMinutes = parseInt(workSlider.value, 10);
     const newBreakMinutes = parseInt(breakSlider.value, 10);
 
