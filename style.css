@@ -80,6 +80,11 @@
     transform: scale(0.95);
   }
 
+  .pomodoro__round {
+    color: #fdcbb0;
+    padding-bottom: 5px;
+  }
+
   #slider-container {
     display: none;  
     flex-direction: column;

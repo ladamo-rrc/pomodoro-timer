@@ -34,6 +34,8 @@ function startTimer() {
                 if (completedSessions % pomoCycles === 0) {
                     currentMode = "longBreak";
                     timeLeft = longBreak;
+
+                    completedSessions = 0;
                 } else {
                     currentMode = "shortBreak";
                     timeLeft = shortBreak;
@@ -41,11 +43,13 @@ function startTimer() {
             } else {
                 currentMode = "work";
                 timeLeft = workDuration;
+
+                updateRoundCounter();
             }
             
             updateModeLabel();
-
             alarmSound.play();
+
             if(currentMode === "work"){
                 showCustomAlert("Time to focus! Click ok to start working.", startTimer);
             } else {
@@ -82,6 +86,17 @@ function displayTimeLeft(seconds) {
     const formatted = `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
     document.querySelector(".pomodoro__time").textContent = formatted;
     document.title = formatted;
+}
+
+function updateRoundCounter() {
+    const roundDisplay = document.querySelector(".pomodoro__round");
+
+    const currentRound = (completedSessions % pomoCycles) + 1;
+
+    roundDisplay.textContent = `Round ${currentRound} of ${pomoCycles}`;
+
+    // want to update round after every session (after every break)
+    
 }
 
 document.getElementById("startButton").addEventListener("click", startTimer);
