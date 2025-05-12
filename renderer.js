@@ -158,8 +158,10 @@ const toggleSettings = document.getElementById('toggle-settings');
 const sliderContainer = document.getElementById('slider-container');
 const workSlider = document.getElementById('work-slider');
 const breakSlider = document.getElementById('break-slider');
+const cycleSlider = document.getElementById('cycle-slider');
 const workValue = document.getElementById('work-value');
 const breakValue = document.getElementById('break-value');
+const cycleValue = document.getElementById('cycle-value');
 const saveButton = document.getElementById('save-settings');
 const timerDisplay = document.querySelector('.pomodoro__time');
 
@@ -176,6 +178,10 @@ toggleSettings.addEventListener('click', () => {
     sliderContainer.style.display = isHidden ? 'block' : 'none';
 });
 
+cycleSlider.addEventListener('input', () => {
+    cycleValue.textContent = cycleSlider.value;
+});
+
 // Save button for sliders
 saveButton.addEventListener('click', () => {
     if (!confirm("Changing the timer settings will reset the timer. Are you sure you want to continue?")) 
@@ -183,9 +189,11 @@ saveButton.addEventListener('click', () => {
 
     const newWorkMinutes = parseInt(workSlider.value, 10);
     const newBreakMinutes = parseInt(breakSlider.value, 10);
+    const newCycleCount = parseInt(cycleSlider.value, 10);
 
     workDuration = newWorkMinutes * 60;
     shortBreak = newBreakMinutes * 60;
+    pomoCycles = newCycleCount;
 
  
     if (timerRunning) {
@@ -201,6 +209,7 @@ saveButton.addEventListener('click', () => {
     }
 
     displayTimeLeft(timeLeft);
+    updateRoundCounter();
     sliderContainer.style.display = 'none'; 
 });
 
