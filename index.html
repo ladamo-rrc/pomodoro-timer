@@ -18,13 +18,12 @@
       </div>
       <p class="pomodoro__mode">Work</p>
       <div class="pomodoro__controls">
-        <button id="startButton">start</button>
-        <button id="pauseButton">pause</button>
-        <button id="resetButton">reset</button>
+        <button id="toggleButton" class="pomodoro__button">start</button>
+        <button id="resetButton" class="pomodoro__button">reset</button>
       </div>
       
       <div class="pomodoro__controls">
-      <button id="toggle-settings">Customize Time</button>
+      <button id="toggle-settings">Customize</button>
       </div>
 
       <!--Sliders-->
@@ -35,6 +34,9 @@
 
         <label for="break-slider">Break Minutes: <span id="break-value">5</span></label>
         <input type="range" id="break-slider" min="1" max="30" value="5">
+
+        <!-- <label for="cycle-slider">Pomo cycles:<span id="cycle-value">5</span></label>
+        <input type="range" id="cycle-slider" min="1" max="10" value="4"> -->
 
         <button id="save-settings">OK</button>
         
