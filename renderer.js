@@ -11,14 +11,66 @@ let timerRunning = false;
 let intervalId = null;
 
 /*** TIMER ***/
-
-// Timer function // 
-function startTimer() {
+function toggleTimer() {
+    const toggleButton = document.getElementById("toggleButton");
+    
     if (timerRunning) {
-        return;
-    }
+        // Pause the timer
+        clearInterval(intervalId);
+        timerRunning = false;
+        toggleButton.textContent = "start";
+    } else {
+        // Start the timer
+        timerRunning = true;
+        toggleButton.textContent = "pause";
+        
+        intervalId = setInterval(() => {
+            timeLeft--;
+            displayTimeLeft(timeLeft);
 
+            if (timeLeft <= 0) {
+                clearInterval(intervalId);
+                timerRunning = false;
+                document.title = "Time's up!";
+                toggleButton.textContent = "Start";
+
+                if (currentMode === "work") {
+                    completedSessions++;
+
+                    if (completedSessions % pomoCycles === 0) {
+                        currentMode = "longBreak";
+                        timeLeft = longBreak;
+
+                        completedSessions = 0;
+                    } else {
+                        currentMode = "shortBreak";
+                        timeLeft = shortBreak;
+                    }
+                } else {
+                    currentMode = "work";
+                    timeLeft = workDuration;
+
+                    updateRoundCounter();
+                }
+                
+                updateModeLabel();
+                alarmSound.play();
+
+                if(currentMode === "work"){
+                    showCustomAlert("Time to focus! Click ok to start working.", startNextPhase);
+                } else {
+                    showCustomAlert("Time for a break! Click ok to start!", startNextPhase);
+                }
+            }
+        }, 50); // interval in milliseconds, change for testing 
+    }
+}
+
+function startNextPhase() {
+    const toggleButton = document.getElementById("toggleButton");
+    toggleButton.textContent = "Pause";
     timerRunning = true;
+    
     intervalId = setInterval(() => {
         timeLeft--;
         displayTimeLeft(timeLeft);
@@ -27,6 +79,7 @@ function startTimer() {
             clearInterval(intervalId);
             timerRunning = false;
             document.title = "Time's up!";
+            toggleButton.textContent = "Start";
 
             if (currentMode === "work") {
                 completedSessions++;
@@ -51,24 +104,19 @@ function startTimer() {
             alarmSound.play();
 
             if(currentMode === "work"){
-                showCustomAlert("Time to focus! Click ok to start working.", startTimer);
+                showCustomAlert("Time to focus! Click ok to start working.", startNextPhase);
             } else {
-                showCustomAlert("Time for a break! Click ok to start!", startTimer);
+                showCustomAlert("Time for a break! Click ok to start!", startNextPhase);
             }
-            }
-    }, 50); // interval in milliseconds, change for testing 
+        }
+    }, 50);
 }
 
-// pause function // 
-function pauseTimer(){
-    if (timerRunning) {
-        clearInterval(intervalId);
-        timerRunning = false;
-    }
-}
-
-// Reset // 
+// Reset function 
 function resetTimer() {
+    if (!confirm("Are you sure you want to reset the timer?")){
+        return;
+    }
     clearInterval(intervalId);
     timerRunning = false;
     timeLeft = currentMode === "work" ? workDuration
@@ -77,9 +125,11 @@ function resetTimer() {
     
     displayTimeLeft(timeLeft);
     document.title = "Pomodoro timer";
+    
+    document.getElementById("toggleButton").textContent = "Start";
 }
 
-// Display time left // 
+// Display time left function 
 function displayTimeLeft(seconds) {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
@@ -90,41 +140,21 @@ function displayTimeLeft(seconds) {
 
 function updateRoundCounter() {
     const roundDisplay = document.querySelector(".pomodoro__round");
-
     const currentRound = (completedSessions % pomoCycles) + 1;
-
     roundDisplay.textContent = `Round ${currentRound} of ${pomoCycles}`;
-
-    // want to update round after every session (after every break)
-    
 }
 
-document.getElementById("startButton").addEventListener("click", startTimer);
-document.getElementById("pauseButton").addEventListener("click", pauseTimer);
+document.getElementById("toggleButton").addEventListener("click", toggleTimer);
 document.getElementById("resetButton").addEventListener("click", resetTimer);
 
 /*** ALARM SOUND ***/
-
-const alarmSound = new Audio('assets/tones/marimba-alert.mp3');
-
-function switchTimer() {
-    alarmSound.play(); 
-    if (isWorking) {
-      currentTime = breakTime;
-      isWorking = false;
-    } else {
-      currentTime = workTime;
-      isWorking = true;
-    }
-    updateDisplay();
-  }
+const alarmSound = new Audio('assets/tones/timer-done.mp3');
 
 /*** SLIDERS ***/
-
 let workMinutes = 25;
 let breakMinutes = 5;
 
-const toggleButton = document.getElementById('toggle-settings');
+const toggleSettings = document.getElementById('toggle-settings');
 const sliderContainer = document.getElementById('slider-container');
 const workSlider = document.getElementById('work-slider');
 const breakSlider = document.getElementById('break-slider');
@@ -141,13 +171,12 @@ breakSlider.addEventListener('input', ()=> {
     breakValue.textContent = breakSlider.value;
 })
 
-toggleButton.addEventListener('click', () => {
+toggleSettings.addEventListener('click', () => {
     const isHidden = sliderContainer.style.display === 'none';
     sliderContainer.style.display = isHidden ? 'block' : 'none';
 });
 
-// ok button for sliders // 
-
+// Save button for sliders
 saveButton.addEventListener('click', () => {
     if (!confirm("Changing the timer settings will reset the timer. Are you sure you want to continue?")) 
         return;
@@ -158,7 +187,12 @@ saveButton.addEventListener('click', () => {
     workDuration = newWorkMinutes * 60;
     shortBreak = newBreakMinutes * 60;
 
-    pauseTimer();
+ 
+    if (timerRunning) {
+        clearInterval(intervalId);
+        timerRunning = false;
+        document.getElementById("toggleButton").textContent = "Start";
+    }
 
     if (currentMode === "work") {
         timeLeft = workDuration;
@@ -167,12 +201,10 @@ saveButton.addEventListener('click', () => {
     }
 
     displayTimeLeft(timeLeft);
-
     sliderContainer.style.display = 'none'; 
 });
 
-// CUSTOM ALERT BOX //
-
+// CUSTOM ALERT BOX 
 function showCustomAlert(message, callback) {
     const alertBox = document.getElementById('custom-alert');
     const alertMessage = document.getElementById('alert-message');
@@ -192,4 +224,5 @@ function showCustomAlert(message, callback) {
 
 function updateModeLabel() {
     const modeLabel = document.querySelector(".pomodoro__mode");
-    modeLabel.textContent = currentMode === "work" ? "Work" : "Break";}
+    modeLabel.textContent = currentMode === "work" ? "Work" : "Break";
+}
