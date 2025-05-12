@@ -224,5 +224,12 @@ function showCustomAlert(message, callback) {
 
 function updateModeLabel() {
     const modeLabel = document.querySelector(".pomodoro__mode");
-    modeLabel.textContent = currentMode === "work" ? "Work" : "Break";
+
+    if (currentMode === "work") {
+        modeLabel.textContent = "work";
+    } else if (currentMode === "shortBreak") {
+        modeLabel.textContent = "break";
+    } else if (currentMode === "longBreak") {
+        modeLabel.textContent = "long break";
+    }
 }
