@@ -62,7 +62,7 @@ function toggleTimer() {
                     showCustomAlert("Time for a break! Click ok to start!", startNextPhase);
                 }
             }
-        }, 50); // interval in milliseconds, change for testing 
+        }, 1000); // interval in milliseconds, change for testing 
     }
 }
 
@@ -109,7 +109,7 @@ function startNextPhase() {
                 showCustomAlert("Time for a break! Click ok to start!", startNextPhase);
             }
         }
-    }, 50);
+    }, 1000);
 }
 
 // Reset function 
@@ -140,8 +140,8 @@ function displayTimeLeft(seconds) {
 
 function updateRoundCounter() {
     const roundDisplay = document.querySelector(".pomodoro__round");
-    const currentRound = (completedSessions % pomoCycles) + 1;
-    roundDisplay.textContent = `Round ${currentRound} of ${pomoCycles}`;
+    const currentRound = completedSessions % pomoCycles;
+    roundDisplay.textContent = `Round ${currentRound + 1} of ${pomoCycles}`;
 }
 
 document.getElementById("toggleButton").addEventListener("click", toggleTimer);
@@ -223,6 +223,9 @@ function showCustomAlert(message, callback) {
     alertBox.classList.remove('hidden');
 
     function closeAlert() {
+        alarmSound.pause();
+        alarmSound.currentTime = 0;
+
         alertBox.classList.add('hidden');
         okButton.removeEventListener('click', closeAlert);
         callback(); // starts the next timer phase 
