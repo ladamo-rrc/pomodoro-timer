@@ -194,3 +194,42 @@ button {
     font-size: 14px;
     padding: 4px 8px;
 }
+
+/*task list styling*/
+
+#task-list {
+    display: none;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+    justify-content: center;
+    width: 350px;
+    padding: 25px;
+    background-color: rgba(0, 0, 0, 0.9);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    color: #fdcbb0
+}
+
+#task-list h4 {
+    color: #f2b600;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+#new-task-input input {
+    padding: 8px;
+    width: 200px;
+    margin-right: 10px;
+}
+
+#task-container {
+    max-height: 200px;
+    overflow-y: auto;
+    width: 100%;
+}

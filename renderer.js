@@ -151,6 +151,16 @@ cycleSlider.addEventListener('input', () => {
     cycleValue.textContent = cycleSlider.value;
 });
 
+document.getElementById("open-task-list").addEventListener("click", () => {
+    const taskList = document.getElementById('task-list');
+    taskList.style.display = 'flex'; 
+});
+
+document.getElementById("close-task-list").addEventListener("click", () => {
+    const taskList = document.getElementById('task-list');
+    taskList.style.display = 'none';
+});
+
 // Save button for sliders
 saveButton.addEventListener('click', () => {
     if (!confirm("Changing the timer settings will reset the timer. Are you sure you want to continue?")) 
