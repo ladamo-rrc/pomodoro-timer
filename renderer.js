@@ -3,6 +3,12 @@ let shortBreak = 5 * 60;
 let longBreak = 15 * 60;
 let pomoCycles = 4;
 
+// uncomment for testing 
+// let workDuration = 5;
+// let shortBreak = 3
+// let longBreak = 10;
+// let pomoCycles = 4;
+
 let timeLeft = workDuration;
 let currentMode = "work";
 let completedSessions = 0;
@@ -11,68 +17,17 @@ let timerRunning = false;
 let intervalId = null;
 
 /*** TIMER ***/
-function toggleTimer() {
+
+function startTimer() {
     const toggleButton = document.getElementById("toggleButton");
-    
-    if (timerRunning) {
-        // Pause the timer
-        clearInterval(intervalId);
-        timerRunning = false;
-        toggleButton.textContent = "start";
-    } else {
-        // Start the timer
-        timerRunning = true;
-        toggleButton.textContent = "pause";
-        
-        intervalId = setInterval(() => {
-            timeLeft--;
-            displayTimeLeft(timeLeft);
-
-            if (timeLeft <= 0) {
-                clearInterval(intervalId);
-                timerRunning = false;
-                document.title = "Time's up!";
-                toggleButton.textContent = "Start";
-
-                if (currentMode === "work") {
-                    completedSessions++;
-
-                    if (completedSessions % pomoCycles === 0) {
-                        currentMode = "longBreak";
-                        timeLeft = longBreak;
-
-                        completedSessions = 0;
-                    } else {
-                        currentMode = "shortBreak";
-                        timeLeft = shortBreak;
-                    }
-                } else {
-                    currentMode = "work";
-                    timeLeft = workDuration;
-
-                    updateRoundCounter();
-                }
-                
-                updateModeLabel();
-                alarmSound.play();
-
-                if(currentMode === "work"){
-                    showCustomAlert("Time to focus! Click ok to start working.", startNextPhase);
-                } else {
-                    showCustomAlert("Time for a break! Click ok to start!", startNextPhase);
-                }
-            }
-        }, 1000); // interval in milliseconds, change for testing 
-    }
-}
-
-function startNextPhase() {
-    const toggleButton = document.getElementById("toggleButton");
-    toggleButton.textContent = "Pause";
     timerRunning = true;
-    
+    toggleButton.textContent = "Pause";
+
+    const endTime = Date.now() + timeLeft * 1000;
+
     intervalId = setInterval(() => {
-        timeLeft--;
+        const now = Date.now();
+        timeLeft = Math.round((endTime - now) / 1000);
         displayTimeLeft(timeLeft);
 
         if (timeLeft <= 0) {
@@ -81,13 +36,12 @@ function startNextPhase() {
             document.title = "Time's up!";
             toggleButton.textContent = "Start";
 
+            // Handle end-of-phase logic
             if (currentMode === "work") {
                 completedSessions++;
-
                 if (completedSessions % pomoCycles === 0) {
                     currentMode = "longBreak";
                     timeLeft = longBreak;
-
                     completedSessions = 0;
                 } else {
                     currentMode = "shortBreak";
@@ -96,20 +50,35 @@ function startNextPhase() {
             } else {
                 currentMode = "work";
                 timeLeft = workDuration;
-
                 updateRoundCounter();
             }
-            
+
             updateModeLabel();
             alarmSound.play();
 
-            if(currentMode === "work"){
-                showCustomAlert("Time to focus! Click ok to start working.", startNextPhase);
+            if (currentMode === "work") {
+                showCustomAlert("Time to focus! Click ok to start working.", startTimer);
             } else {
-                showCustomAlert("Time for a break! Click ok to start!", startNextPhase);
+                showCustomAlert("Time for a break! Click ok to start!", startTimer);
             }
         }
     }, 1000);
+}
+
+function toggleTimer() {
+    const toggleButton = document.getElementById("toggleButton");
+
+    if (timerRunning) {
+        clearInterval(intervalId);
+        timerRunning = false;
+        toggleButton.textContent = "Start";
+    } else {
+        startTimer();
+    }
+}
+
+function startNextPhase() {
+    startTimer();
 }
 
 // Reset function 
