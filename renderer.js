@@ -2,7 +2,9 @@ let workDuration = 25 * 60;
 let shortBreak = 5 * 60;
 let longBreak = 15 * 60;
 let pomoCycles = 4;
+
 let tasks = [];
+let deleteMode = false;
 
 // uncomment for testing 
 // let workDuration = 5;
@@ -116,6 +118,7 @@ function updateRoundCounter() {
 
 document.getElementById("toggleButton").addEventListener("click", toggleTimer);
 document.getElementById("resetButton").addEventListener("click", resetTimer);
+document.getElementById("delete-task-button").addEventListener("click", toggleDeleteMode);
 updateTaskDisplay();
 
 /*** ALARM SOUND ***/
@@ -235,19 +238,44 @@ function updateModeLabel() {
     }
 }
 
-// TASK LIST //
+/*** TASK LIST ***/
 
 function updateTaskDisplay(){
     const getTasks = document.getElementById('task-container');
     if (tasks.length === 0) {
        getTasks.innerHTML = '<p>No tasks yet! you should add some, lazy bones!</p>';
     } else {
-    let taskHTML = '';
-    tasks.forEach(task => {
-        taskHTML += `<div class="task-item">${task.text}</div>`;
-    });
-    getTasks.innerHTML = taskHTML;
-    }    
+        let taskHTML = '';
+        tasks.forEach((task, index) => {
+            if (deleteMode) {
+                taskHTML += `<div class="task-item">
+                    <input type="checkbox" id="task-checkbox-${index}">
+                    ${task.text}
+                </div>`;
+            } else {
+                taskHTML += `<div class="task-item">${task.text}</div>`;
+            }
+        });
+        getTasks.innerHTML = taskHTML;
+    }
+
+    if (deleteMode) {
+        let anyChecked = false;
+        const deleteSelectedButton = document.getElementById("delete-selected-tasks"); 
+        
+        for (let i = 0; i < tasks.length; i++) {
+            const checkbox = document.getElementById(`task-checkbox-${i}`);
+            if (checkbox) {
+                checkbox.addEventListener("change",  function() {
+                    anyChecked = true;
+                    deleteSelectedButton.disabled = !anyChecked;
+                    
+                })
+            }
+        }
+        
+        deleteSelectedButton.disabled = !anyChecked;
+    }
 }
 
 document.getElementById("add-task-button").addEventListener("click", ()=> {
@@ -274,4 +302,23 @@ function addTask() {
         inputField.classList.add('hidden');
     }
 
+}
+
+function toggleDeleteMode(){
+    deleteMode = !deleteMode;
+    
+    const deleteButton = document.getElementById("delete-task-button");
+    const deleteSelectedButton = document.getElementById("delete-selected-tasks");
+
+    if (deleteMode) {
+        deleteButton.textContent = "cancel";
+        deleteSelectedButton.classList.remove('hidden');
+        deleteSelectedButton.disabled = true;
+    } else {
+        deleteButton.textContent = "delete mode";
+        deleteSelectedButton.classList.add('hidden');
+        deleteSelectedButton.disabled = false;
+    }
+
+    updateTaskDisplay();
 }
