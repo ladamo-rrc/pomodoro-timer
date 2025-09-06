@@ -2,6 +2,7 @@ let workDuration = 25 * 60;
 let shortBreak = 5 * 60;
 let longBreak = 15 * 60;
 let pomoCycles = 4;
+let tasks = [];
 
 // uncomment for testing 
 // let workDuration = 5;
@@ -115,6 +116,7 @@ function updateRoundCounter() {
 
 document.getElementById("toggleButton").addEventListener("click", toggleTimer);
 document.getElementById("resetButton").addEventListener("click", resetTimer);
+updateTaskDisplay();
 
 /*** ALARM SOUND ***/
 const alarmSound = new Audio('assets/tones/timer-done.mp3');
@@ -143,8 +145,13 @@ breakSlider.addEventListener('input', ()=> {
 })
 
 toggleSettings.addEventListener('click', () => {
-    const isHidden = sliderContainer.style.display === 'none';
-    sliderContainer.style.display = isHidden ? 'block' : 'none';
+    const isHidden = sliderContainer.classList.contains('hidden');
+    if (isHidden) {
+        sliderContainer.classList.remove('hidden');
+        sliderContainer.style.display = 'block';
+    } else {
+        sliderContainer.classList.add('hidden');
+    }
 });
 
 cycleSlider.addEventListener('input', () => {
@@ -153,12 +160,15 @@ cycleSlider.addEventListener('input', () => {
 
 document.getElementById("open-task-list").addEventListener("click", () => {
     const taskList = document.getElementById('task-list');
+    taskList.classList.remove('hidden');
     taskList.style.display = 'flex'; 
 });
 
 document.getElementById("close-task-list").addEventListener("click", () => {
     const taskList = document.getElementById('task-list');
-    taskList.style.display = 'none';
+    const inputfield = document.getElementById('task-input-field'); 
+    taskList.classList.add('hidden');
+    inputfield.classList.add('hidden');
 });
 
 // Save button for sliders
@@ -189,7 +199,7 @@ saveButton.addEventListener('click', () => {
 
     displayTimeLeft(timeLeft);
     updateRoundCounter();
-    sliderContainer.style.display = 'none'; 
+    sliderContainer.classList.add('hidden');
 });
 
 // CUSTOM ALERT BOX 
@@ -223,4 +233,45 @@ function updateModeLabel() {
     } else if (currentMode === "longBreak") {
         modeLabel.textContent = "long break";
     }
+}
+
+// TASK LIST //
+
+function updateTaskDisplay(){
+    const getTasks = document.getElementById('task-container');
+    if (tasks.length === 0) {
+       getTasks.innerHTML = '<p>No tasks yet! you should add some, lazy bones!</p>';
+    } else {
+    let taskHTML = '';
+    tasks.forEach(task => {
+        taskHTML += `<div class="task-item">${task.text}</div>`;
+    });
+    getTasks.innerHTML = taskHTML;
+    }    
+}
+
+document.getElementById("add-task-button").addEventListener("click", ()=> {
+    const inputfield = document.getElementById("task-input-field");
+    if (inputfield.classList.contains('hidden')) {
+        inputfield.classList.remove('hidden');
+    } else {
+        addTask();
+    }
+});
+
+function addTask() {
+    const inputField = document.getElementById('task-input-field');
+    const taskText = inputField.value.trim();
+
+    if (taskText.trim() !== '') {
+        tasks.push({
+            text: taskText,
+            completed: false
+        });
+
+        updateTaskDisplay();
+        inputField.value = '';
+        inputField.classList.add('hidden');
+    }
+
 }

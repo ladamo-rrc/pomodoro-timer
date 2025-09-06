@@ -19,7 +19,11 @@ html, body {
     align-items: center;
     image-rendering: pixelated;
 }
-  
+
+  .hidden {
+    display: none !important;
+}
+
 .pomodoro {
     text-align: center;
     background-color: transparent;  
@@ -232,4 +236,10 @@ button {
     max-height: 200px;
     overflow-y: auto;
     width: 100%;
+}
+
+#open-task-list {
+    position: fixed;
+    top: 25px;
+    left: 45px;
 }
