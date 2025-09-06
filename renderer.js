@@ -119,6 +119,7 @@ function updateRoundCounter() {
 document.getElementById("toggleButton").addEventListener("click", toggleTimer);
 document.getElementById("resetButton").addEventListener("click", resetTimer);
 document.getElementById("delete-task-button").addEventListener("click", toggleDeleteMode);
+document.getElementById("delete-selected-tasks").addEventListener("click", deleteSelectedTasks);
 updateTaskDisplay();
 
 /*** ALARM SOUND ***/
@@ -242,9 +243,12 @@ function updateModeLabel() {
 
 function updateTaskDisplay(){
     const getTasks = document.getElementById('task-container');
+    const deleteTaskButton = document.getElementById("delete-task-button"); 
     if (tasks.length === 0) {
        getTasks.innerHTML = '<p>No tasks yet! you should add some, lazy bones!</p>';
+       deleteTaskButton.classList.add('hidden');
     } else {
+        deleteTaskButton.classList.remove('hidden');
         let taskHTML = '';
         tasks.forEach((task, index) => {
             if (deleteMode) {
@@ -273,7 +277,7 @@ function updateTaskDisplay(){
                 })
             }
         }
-        
+
         deleteSelectedButton.disabled = !anyChecked;
     }
 }
@@ -309,16 +313,41 @@ function toggleDeleteMode(){
     
     const deleteButton = document.getElementById("delete-task-button");
     const deleteSelectedButton = document.getElementById("delete-selected-tasks");
+    const addTask = document.getElementById("add-task-button");
 
     if (deleteMode) {
         deleteButton.textContent = "cancel";
         deleteSelectedButton.classList.remove('hidden');
         deleteSelectedButton.disabled = true;
+        addTask.classList.add('hidden');
     } else {
-        deleteButton.textContent = "delete mode";
+        deleteButton.textContent = "delete a task";
         deleteSelectedButton.classList.add('hidden');
         deleteSelectedButton.disabled = false;
+        addTask.classList.remove('hidden');
     }
 
     updateTaskDisplay();
+}
+
+function deleteSelectedTasks() {
+    let tasksToDelete = [];
+
+    for (let i = 0; i <tasks.length; i++) {
+        const checkbox = document.getElementById(`task-checkbox-${i}`);
+        if (checkbox.checked) {
+            tasksToDelete.push(i); 
+            // delete in reverse order, because starting from the top will
+            // cause the next index to move up
+        } //for loop here?
+    }
+
+    tasksToDelete.sort((a, b) => b - a);
+    
+    for (let i = 0; i < tasksToDelete.length; i++) {
+        tasks.splice(tasksToDelete[i], 1);
+    }
+
+    updateTaskDisplay();
+    toggleDeleteMode();
 }
