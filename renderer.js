@@ -122,6 +122,20 @@ document.getElementById("delete-task-button").addEventListener("click", toggleDe
 document.getElementById("delete-selected-tasks").addEventListener("click", deleteSelectedTasks);
 updateTaskDisplay();
 
+document.getElementById('task-container').addEventListener('change', function(event){
+        if (event.target.type === 'checkbox' && deleteMode) {
+            
+            const checkedBoxes = document.querySelectorAll('#task-container input[type="checkbox"]:checked');
+            const deleteButton = document.getElementById("delete-selected-tasks");
+
+            if (checkedBoxes.length > 0) {
+                deleteButton.disabled = false; 
+            } else {
+                deleteButton.disabled = true;
+            }
+        }
+     })
+
 /*** ALARM SOUND ***/
 const alarmSound = new Audio('assets/tones/timer-done.mp3');
 
@@ -262,24 +276,6 @@ function updateTaskDisplay(){
         });
         getTasks.innerHTML = taskHTML;
     }
-
-    if (deleteMode) {
-        let anyChecked = false;
-        const deleteSelectedButton = document.getElementById("delete-selected-tasks"); 
-        
-        for (let i = 0; i < tasks.length; i++) {
-            const checkbox = document.getElementById(`task-checkbox-${i}`);
-            if (checkbox) {
-                checkbox.addEventListener("change",  function() {
-                    anyChecked = true;
-                    deleteSelectedButton.disabled = !anyChecked;
-                    
-                })
-            }
-        }
-
-        deleteSelectedButton.disabled = !anyChecked;
-    }
 }
 
 document.getElementById("add-task-button").addEventListener("click", ()=> {
@@ -303,6 +299,8 @@ function addTask() {
 
         updateTaskDisplay();
         inputField.value = '';
+        inputField.classList.add('hidden');
+    } else {
         inputField.classList.add('hidden');
     }
 
@@ -343,7 +341,19 @@ function deleteSelectedTasks() {
     }
 
     tasksToDelete.sort((a, b) => b - a);
-    
+
+    if (tasksToDelete.length === 1) {
+        if (!confirm("Do you want to delete this task? i hope you finished it!")) {
+            return; 
+        }
+     } else if (tasksToDelete.length > 1) {
+            if (!confirm("Do you want to delete these tasks? tsk tsk tsk...")) {
+                return; 
+    }
+}
+
+    console.log("About to delete tasks:", tasksToDelete);
+
     for (let i = 0; i < tasksToDelete.length; i++) {
         tasks.splice(tasksToDelete[i], 1);
     }

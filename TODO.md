@@ -10,11 +10,9 @@
     - have them randomize
     - after 4 cycles: "wow you worked hard, you deserve a longer break!"
 
-- create a task list
-    - have checkboxes
-    - popup task list so user can view what they have to do
-    - one focus task at bottom of screen
-
 - add custom messages based on how many cycles the user has completed.
 
-- add documentation maybe
+# BUGS/ISSUES I'VE FOUND 
+
+- break slider affects both long and short breaks 
+- after deleting a task, you cant add one 
