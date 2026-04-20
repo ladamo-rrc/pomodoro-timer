@@ -15,8 +15,9 @@
       <p class ="pomodoro__round">Round 1 of 4</p>
       <div class ="timer-container">
       <h1 class="pomodoro__time">25:00</h1>
-      </div>
       <p class="pomodoro__mode">Work</p>
+      </div>
+      <p id="active-task-display"></p>
       <div class="pomodoro__controls">
         <button id="toggleButton" class="pomodoro__button">start</button>
         <button id="resetButton" class="pomodoro__button">reset</button>
@@ -54,6 +55,14 @@
         </div>
       </div>
       
+        <div id="custom-confirm" class="pixel-alert hidden">
+      <img src="assets/images/break-time-alert.png" alt="Confirm Box" draggable="false">
+      <div class="alert-text">
+          <p id="confirm-message"></p>
+          <button id="confirm-ok">yes</button>
+          <button id="confirm-cancel">no</button>
+      </div>
+  </div>
       <!-- TASK LIST-->
 
       <button id="open-task-list">Tasks</button>

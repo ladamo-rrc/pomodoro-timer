@@ -3,7 +3,7 @@ let shortBreak = 5 * 60;
 let longBreak = 15 * 60;
 let pomoCycles = 4;
 
-let tasks = [];
+let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
 let deleteMode = false;
 
 // uncomment for testing 
@@ -19,6 +19,10 @@ let completedSessions = 0;
 let timerRunning = false;
 let intervalId = null;
 
+/*** ALARM SOUND ***/
+const alarmSound = new Audio('assets/tones/timer-done-2.mp3');
+
+
 /*** TIMER ***/
 
 function startTimer() {
@@ -30,7 +34,7 @@ function startTimer() {
 
     intervalId = setInterval(() => {
         const now = Date.now();
-        timeLeft = Math.round((endTime - now) / 1000);
+        timeLeft = Math.max(0, Math.round((endTime - now) / 1000));
         displayTimeLeft(timeLeft);
 
         if (timeLeft <= 0) {
@@ -66,6 +70,23 @@ function startTimer() {
             }
         }
     }, 1000);
+}
+
+function showCustomConfirm(message, onConfirm) {
+    const alertBox = document.getElementById('custom-alert');
+    const alertMessage = document.getElementById('alert-message');
+    const okButton = document.getElementById('alert-ok');
+
+    alertMessage.textContent = message;
+    alertBox.classList.remove('hidden');
+
+    function handleOk() {
+        alertBox.classList.add('hidden');
+        okButton.removeEventListener('click', handleOk);
+        onConfirm();
+    }
+
+    okButton.addEventListener('click', handleOk);
 }
 
 function toggleTimer() {
@@ -135,9 +156,6 @@ document.getElementById('task-container').addEventListener('change', function(ev
             }
         }
      })
-
-/*** ALARM SOUND ***/
-const alarmSound = new Audio('assets/tones/timer-done.mp3');
 
 /*** SLIDERS ***/
 let workMinutes = 25;
@@ -255,55 +273,116 @@ function updateModeLabel() {
 
 /*** TASK LIST ***/
 
-function updateTaskDisplay(){
-    const getTasks = document.getElementById('task-container');
-    const deleteTaskButton = document.getElementById("delete-task-button"); 
+function updateTaskDisplay() {
+    const container = document.getElementById('task-container');
+    const deleteTaskButton = document.getElementById("delete-task-button");
+
     if (tasks.length === 0) {
-       getTasks.innerHTML = '<p>No tasks yet! you should add some, lazy bones!</p>';
-       deleteTaskButton.classList.add('hidden');
-    } else {
-        deleteTaskButton.classList.remove('hidden');
-        let taskHTML = '';
-        tasks.forEach((task, index) => {
+        container.innerHTML = '<p>No tasks yet! you should add some, lazy bones!</p>';
+        deleteTaskButton.classList.add('hidden');
+        updateActiveTaskDisplay();
+        return;
+    }
+
+    deleteTaskButton.classList.remove('hidden');
+
+    const activeTasks = tasks.filter(t => !t.completed);
+    const completedTasks = tasks.filter(t => t.completed);
+
+    let html = '';
+
+    activeTasks.forEach((task, i) => {
+        const realIndex = tasks.indexOf(task);
+        if (deleteMode) {
+            html += `<div class="task-item">
+                <input type="checkbox" id="task-checkbox-${realIndex}">
+                ${task.text}
+            </div>`;
+        } else {
+            html += `<div class="task-item">
+                <input type="checkbox" class="complete-checkbox" data-index="${realIndex}">
+                <span>${task.text}</span>
+                <button class="pin-btn ${task.pinned ? 'pinned' : ''}" data-index="${realIndex}">.ᐟ(pin)</button>
+            </div>`;
+        }
+    });
+
+    if (completedTasks.length > 0) {
+        html += `<p class="completed-header">Completed</p>`;
+        completedTasks.forEach((task) => {
+            const realIndex = tasks.indexOf(task);
             if (deleteMode) {
-                taskHTML += `<div class="task-item">
-                    <input type="checkbox" id="task-checkbox-${index}">
+                html += `<div class="task-item completed">
+                    <input type="checkbox" id="task-checkbox-${realIndex}">
                     ${task.text}
                 </div>`;
             } else {
-                taskHTML += `<div class="task-item">${task.text}</div>`;
+                html += `<div class="task-item completed">
+                    <input type="checkbox" class="complete-checkbox" data-index="${realIndex}" checked>
+                    <span>${task.text}</span>
+                </div>`;
             }
         });
-        getTasks.innerHTML = taskHTML;
     }
+
+    container.innerHTML = html;
+
+    // attach complete checkbox listeners
+    document.querySelectorAll('.complete-checkbox').forEach(cb => {
+        cb.addEventListener('change', (e) => {
+            const index = parseInt(e.target.dataset.index);
+            tasks[index].completed = e.target.checked;
+            if (tasks[index].completed) tasks[index].pinned = false;
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            updateTaskDisplay();
+        });
+    });
+
+    // attach pin button listeners
+    document.querySelectorAll('.pin-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const index = parseInt(e.target.dataset.index);
+            const alreadyPinned = tasks[index].pinned;
+            tasks.forEach(t => t.pinned = false); // unpin all
+            if (!alreadyPinned) tasks[index].pinned = true; // toggle
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            updateTaskDisplay();
+        });
+    });
+
+    updateActiveTaskDisplay();
 }
 
 document.getElementById("add-task-button").addEventListener("click", ()=> {
     const inputfield = document.getElementById("task-input-field");
+    console.log('hidden?', inputfield.classList.contains('hidden'), 'value:', inputfield.value, 'disabled?', inputfield.disabled);
     if (inputfield.classList.contains('hidden')) {
         inputfield.classList.remove('hidden');
+        inputfield.focus();
     } else {
         addTask();
     }
 });
 
+function updateActiveTaskDisplay() {
+    const activeDisplay = document.getElementById('active-task-display');
+    const pinned = tasks.find(t => t.pinned && !t.completed);
+    activeDisplay.textContent = pinned ? `★ ${pinned.text}` : '';
+}
+
 function addTask() {
     const inputField = document.getElementById('task-input-field');
     const taskText = inputField.value.trim();
 
-    if (taskText.trim() !== '') {
-        tasks.push({
-            text: taskText,
-            completed: false
-        });
-
+    if (taskText !== '') {
+        tasks.push({ text: taskText, completed: false });
+        localStorage.setItem('tasks', JSON.stringify(tasks)); // <-- add this
         updateTaskDisplay();
         inputField.value = '';
         inputField.classList.add('hidden');
     } else {
         inputField.classList.add('hidden');
     }
-
 }
 
 function toggleDeleteMode(){
@@ -311,18 +390,18 @@ function toggleDeleteMode(){
     
     const deleteButton = document.getElementById("delete-task-button");
     const deleteSelectedButton = document.getElementById("delete-selected-tasks");
-    const addTask = document.getElementById("add-task-button");
+    const addTaskButton = document.getElementById("add-task-button"); // renamed
 
     if (deleteMode) {
         deleteButton.textContent = "cancel";
         deleteSelectedButton.classList.remove('hidden');
         deleteSelectedButton.disabled = true;
-        addTask.classList.add('hidden');
+        addTaskButton.classList.add('hidden'); // renamed
     } else {
         deleteButton.textContent = "delete a task";
         deleteSelectedButton.classList.add('hidden');
         deleteSelectedButton.disabled = false;
-        addTask.classList.remove('hidden');
+        addTaskButton.classList.remove('hidden'); // renamed
     }
 
     updateTaskDisplay();
@@ -331,33 +410,51 @@ function toggleDeleteMode(){
 function deleteSelectedTasks() {
     let tasksToDelete = [];
 
-    for (let i = 0; i <tasks.length; i++) {
+    tasks.forEach((task, i) => {
         const checkbox = document.getElementById(`task-checkbox-${i}`);
-        if (checkbox.checked) {
-            tasksToDelete.push(i); 
-            // delete in reverse order, because starting from the top will
-            // cause the next index to move up
-        } //for loop here?
-    }
-
-    tasksToDelete.sort((a, b) => b - a);
-
-    if (tasksToDelete.length === 1) {
-        if (!confirm("Do you want to delete this task? i hope you finished it!")) {
-            return; 
+        if (checkbox && checkbox.checked) {
+            tasksToDelete.push(i);
         }
-     } else if (tasksToDelete.length > 1) {
-            if (!confirm("Do you want to delete these tasks? tsk tsk tsk...")) {
-                return; 
-    }
+    });
+
+    if (tasksToDelete.length >= 1) {
+    const msg = tasksToDelete.length === 1 
+        ? "Do you want to delete this task? i hope you finished it!"
+        : "Do you want to delete these tasks? tsk tsk tsk...";
+    
+    showCustomConfirm(msg, () => {
+        for (let i = 0; i < tasksToDelete.length; i++) {
+            tasks.splice(tasksToDelete[i], 1);
+        }
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+        updateTaskDisplay();
+        toggleDeleteMode();
+    });
+}
 }
 
-    console.log("About to delete tasks:", tasksToDelete);
+function showCustomConfirm(message, onConfirm) {
+    const confirmBox = document.getElementById('custom-confirm');
+    const confirmMessage = document.getElementById('confirm-message');
+    const okButton = document.getElementById('confirm-ok');
+    const cancelButton = document.getElementById('confirm-cancel');
 
-    for (let i = 0; i < tasksToDelete.length; i++) {
-        tasks.splice(tasksToDelete[i], 1);
+    confirmMessage.textContent = message;
+    confirmBox.classList.remove('hidden');
+
+    function handleOk() {
+        confirmBox.classList.add('hidden');
+        okButton.removeEventListener('click', handleOk);
+        cancelButton.removeEventListener('click', handleCancel);
+        onConfirm();
     }
 
-    updateTaskDisplay();
-    toggleDeleteMode();
+    function handleCancel() {
+        confirmBox.classList.add('hidden');
+        okButton.removeEventListener('click', handleOk);
+        cancelButton.removeEventListener('click', handleCancel);
+    }
+
+    okButton.addEventListener('click', handleOk);
+    cancelButton.addEventListener('click', handleCancel);
 }
