@@ -15,8 +15,9 @@
       <p class ="pomodoro__round">Round 1 of 4</p>
       <div class ="timer-container">
       <h1 class="pomodoro__time">25:00</h1>
-      </div>
       <p class="pomodoro__mode">Work</p>
+      </div>
+      <p id="active-task-display"></p>
       <div class="pomodoro__controls">
         <button id="toggleButton" class="pomodoro__button">start</button>
         <button id="resetButton" class="pomodoro__button">reset</button>
@@ -28,7 +29,7 @@
 
       <!--Sliders-->
 
-      <div id="slider-container" style="display: none;">
+      <div id="slider-container" class="hidden">
         <label for="work-slider">Work Minutes: <span id="work-value">25</span></label>
         <input type="range" id="work-slider" min="1" max="60" value="25">
 
@@ -54,6 +55,33 @@
         </div>
       </div>
       
+        <div id="custom-confirm" class="pixel-alert hidden">
+      <img src="assets/images/break-time-alert.png" alt="Confirm Box" draggable="false">
+      <div class="alert-text">
+          <p id="confirm-message"></p>
+          <button id="confirm-ok">yes</button>
+          <button id="confirm-cancel">no</button>
+      </div>
+  </div>
+      <!-- TASK LIST-->
+
+      <button id="open-task-list">Tasks</button>
+
+      <div id="task-list" class="hidden">
+      <h4>What do you need to get done today?</h4>
+      <div id="task-container">
+        <!-- tasks will populate here -->
+      </div>
+      <div id="new-task-input">
+        <input type="text" id="task-input-field" placeholder="enter a new task..." class="hidden">
+        <button id="add-task-button">add task</button>
+        <button id="delete-task-button">delete task</button>
+        <button id="delete-selected-tasks" class="hidden">delete selected tasks</button>
+      </div>
+      <button id="close-task-list">close</button>
+    </div>
+
+
     </div>
     <script src = "renderer.js"></script>
   </body>

@@ -19,7 +19,11 @@ html, body {
     align-items: center;
     image-rendering: pixelated;
 }
-  
+
+  .hidden {
+    display: none !important;
+}
+
 .pomodoro {
     text-align: center;
     background-color: transparent;  
@@ -48,6 +52,7 @@ html, body {
     border-radius: 8px;
     display: inline-block;
 }
+
   
 .pomodoro__controls {
     display: flex;
@@ -145,7 +150,6 @@ button {
 }
 
 .pixel-alert {
-    display: none;
     position: fixed;
     top: 50%;
     left: 50%;
@@ -193,4 +197,125 @@ button {
 #alert-ok {
     font-size: 14px;
     padding: 4px 8px;
+}
+
+/*task list styling*/
+
+#task-list {
+    display: none;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+    justify-content: center;
+    width: 350px;
+    padding: 25px;
+    background-color: rgba(0, 0, 0, 0.9);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    color: #fdcbb0;
+    max-height: 100vh;      
+    overflow-y: auto;      
+}
+
+#task-list h4 {
+    color: #f2b600;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+#new-task-input input {
+    padding: 8px;
+    width: 200px;
+    margin-right: 10px;
+}
+
+#task-container {
+    max-height: 200px;
+    overflow-y: auto;
+    width: 100%;
+}
+
+#open-task-list {
+    position: fixed;
+    top: 25px;
+    left: 45px;
+}
+
+.task-item.completed span {
+    text-decoration: line-through;
+    opacity: 0.6;
+}
+
+.completed-header {
+    font-weight: bold;
+    margin-top: 12px;
+    opacity: 0.7;
+}
+
+.pin-btn {
+    margin-left: auto;
+    background: none;
+    border: none;
+    cursor: pointer;
+    opacity: 0.3;
+    font-size: 14px;
+    color: #fdcbb0; 
+    font-family: 'yoster', monospace; 
+}
+
+.pin-btn.pinned {
+    opacity: 1;
+}
+
+#custom-confirm {
+    display: flex;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2000;
+    background-color: rgba(0, 0, 0, 0.9);
+    border-radius: 10px;
+    padding: 24px;
+    width: 280px;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    color: #fdcbb0;
+    font-family: 'yoster', monospace;
+}
+
+#custom-confirm img {
+    display: none;
+}
+
+#open-task-list {
+    background-image: url('assets/images/buttons/big-button-template-large.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 96px;
+    height: 32px;
+    color: #fdcbb0;
+    font-family: 'yoster', monospace;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    image-rendering: pixelated;
+    transition: transform 0.2s ease, font-size 0.2s ease;
+}
+
+#open-task-list:hover {
+    transform: scale(1.15);
+    font-size: 16px;
+}
+
+#open-task-list:active {
+    transform: scale(0.95);
 }
